@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="Arial, sans-serif" font-size="13">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#222"/></marker></defs>
+<rect width="900" height="520" fill="#fff"/>
+<text x="450.0" y="28" text-anchor="middle" font-size="17" font-weight="bold">IDEF0, A-0: Виконувати перекази та виявляти шахрайство</text>
+<rect x="330" y="190" width="240" height="120" fill="#dbeafe" stroke="#222" stroke-width="2"/>
+<text x="450.0" y="237.0" text-anchor="middle" font-weight="bold">Виконувати перекази</text>
+<text x="450.0" y="255.0" text-anchor="middle" font-weight="bold">та виявляти</text>
+<text x="450.0" y="273.0" text-anchor="middle" font-weight="bold">шахрайство</text>
+<text x="564" y="304" text-anchor="end" font-size="11">A0</text>
+<path d="M80 230 L330 230" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M80 280 L330 280" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M570 215 L820 215" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M570 250 L820 250" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M570 285 L820 285" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M400 90 L400 190" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M500 90 L500 190" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M400 420 L400 310" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M500 420 L500 310" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="85" y="222" text-anchor="start" font-size="12">Запит на переказ</text>
+<text x="85" y="272" text-anchor="start" font-size="12">Облікові дані користувача</text>
+<text x="815" y="207" text-anchor="end" font-size="12">Виконаний або відхилений переказ</text>
+<text x="815" y="242" text-anchor="end" font-size="12">Антифрод-алерти, блокування</text>
+<text x="815" y="277" text-anchor="end" font-size="12">Метрики, логи, трейси, алерти</text>
+<text x="392" y="62" text-anchor="end" font-size="12">Правила ACID,</text>
+<text x="392" y="77" text-anchor="end" font-size="12">рівні ізоляції</text>
+<text x="508" y="62" text-anchor="start" font-size="12">Правила антифроду</text>
+<text x="508" y="77" text-anchor="start" font-size="12">(пороги, вікна часу)</text>
+<text x="392" y="440" text-anchor="end" font-size="12">C#/.NET 8, PostgreSQL,</text>
+<text x="392" y="455" text-anchor="end" font-size="12">RabbitMQ</text>
+<text x="508" y="440" text-anchor="start" font-size="12">Prometheus, Loki, Tempo,</text>
+<text x="508" y="455" text-anchor="start" font-size="12">Grafana, Docker</text>
+</svg>

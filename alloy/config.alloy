@@ -1,0 +1,80 @@
+discovery.docker "containers" {
+  host             = "unix:///var/run/docker.sock"
+  refresh_interval = "5s"
+
+  filter {
+    name   = "label"
+    values = ["logging=alloy"]
+  }
+}
+
+discovery.relabel "containers" {
+  targets = discovery.docker.containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+}
+
+loki.source.docker "containers" {
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.docker.containers.targets
+  relabel_rules = discovery.relabel.containers.rules
+  forward_to    = [loki.process.services.receiver]
+}
+
+loki.process "services" {
+  stage.match {
+    selector = "{service=~\"auth-service|transfer-service|fraud-worker\"}"
+
+    stage.json {
+      expressions = {
+        level    = "LogLevel",
+        category = "Category",
+        trace_id = "Scopes[0].TraceId",
+      }
+    }
+
+    stage.labels {
+      values = {
+        level = "",
+      }
+    }
+
+    stage.structured_metadata {
+      values = {
+        trace_id = "",
+        category = "",
+      }
+    }
+  }
+
+  stage.match {
+    selector = "{service=\"postgres\"}"
+
+    stage.regex {
+      expression = "(?P<level>LOG|ERROR|WARNING|FATAL|PANIC|DETAIL|STATEMENT|HINT):"
+    }
+
+    stage.labels {
+      values = {
+        level = "",
+      }
+    }
+  }
+
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

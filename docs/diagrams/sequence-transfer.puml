@@ -1,0 +1,42 @@
+@startuml
+title Послідовність: переказ коштів і антифрод-перевірка
+skinparam shadowing false
+autonumber
+
+actor "Операціоніст" as u
+participant "auth-service" as auth
+participant "transfer-service" as ts
+database "PostgreSQL" as db
+queue "RabbitMQ" as mq
+participant "fraud-worker" as fw
+
+u -> auth : POST /login
+auth --> u : access_token (JWT)
+u -> ts : POST /api/transfers + Bearer
+ts -> ts : перевірка JWT і ролі, валідація суми
+ts -> db : BEGIN ISOLATION LEVEL ...
+ts -> db : SELECT ... FOR UPDATE (менший id)
+ts -> db : SELECT ... FOR UPDATE (більший id)
+alt недостатньо коштів / рахунок заблоковано
+  ts -> db : ROLLBACK
+  ts --> u : 422 / 403
+else deadlock (40P01) або serialization failure (40001)
+  db --> ts : помилка
+  ts -> ts : повтор або 409
+else успіх
+  ts -> db : UPDATE accounts (A − сума, B + сума)
+  ts -> db : INSERT transfers (fraud_status = pending)
+  ts -> db : COMMIT
+  ts -> mq : publish TransferInitiated + traceparent
+  mq --> ts : publisher confirm
+  ts --> u : 201 Created
+  mq -> fw : delivery
+  fw -> db : SELECT fraud_status FOR UPDATE
+  fw -> db : лічильники за вікнами часу
+  fw -> db : INSERT fraud_alerts, UPDATE transfers
+  opt score >= 80
+    fw -> db : UPDATE accounts SET is_blocked = true
+  end
+  fw -> mq : ack
+end
+@enduml

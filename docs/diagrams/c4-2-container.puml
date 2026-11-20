@@ -1,0 +1,50 @@
+@startuml
+title C4, рівень 2: Контейнери
+skinparam defaultTextAlignment center
+skinparam shadowing false
+left to right direction
+
+actor "Операціоніст" as operator
+actor "Аналітик" as analyst
+
+rectangle "Система банківських переказів і антифрод-аналізу" {
+  rectangle "auth-service\n[C#, ASP.NET Core 8]\nвидає токени JWT" as auth #LightBlue
+  database "SQLite\nкористувачі, хеші паролів" as authdb #LightGray
+  rectangle "transfer-service\n[C#, ASP.NET Core 8, Npgsql]\nрахунки та ACID-перекази" as transfer #LightBlue
+  database "PostgreSQL 16\naccounts, transfers,\nfraud_alerts" as db #LightGray
+  queue "RabbitMQ\n[vhost bank]\ntransfers.fraud-check,\ntransfers.invalid" as rabbit #Moccasin
+  rectangle "fraud-worker\n[C#, .NET 8, RabbitMQ.Client]\nаналіз частоти операцій" as worker #LightBlue
+  rectangle "load-generator\n[C# console]\nгенерує навантаження" as gen #LightBlue
+  rectangle "postgres-exporter\nметрики СУБД" as exporter #PaleGreen
+  rectangle "Prometheus\nметрики й алерти" as prom #PaleGreen
+  rectangle "Alertmanager" as am #PaleGreen
+  rectangle "Alloy + Loki\nлоги контейнерів" as loki #PaleGreen
+  rectangle "Tempo\nтрейси OpenTelemetry" as tempo #PaleGreen
+  rectangle "Grafana\nдашборд, Explore" as grafana #PaleGreen
+}
+
+operator --> auth : POST /login
+operator --> transfer : POST /api/transfers + JWT
+gen --> auth : POST /login
+gen --> transfer : HTTP + JWT
+auth --> authdb : SQL
+transfer --> db : SQL, транзакції
+transfer --> rabbit : AMQP TransferInitiated
+rabbit --> worker : AMQP
+worker --> db : SQL, fraud_alerts
+exporter --> db : pg_stat_*
+prom --> transfer : /metrics
+prom --> worker : /metrics
+prom --> auth : /metrics
+prom --> exporter : /metrics
+prom --> rabbit : /metrics
+prom --> am : алерти
+transfer --> tempo : OTLP
+worker --> tempo : OTLP
+auth --> tempo : OTLP
+tempo --> prom : service graph
+grafana --> prom
+grafana --> loki
+grafana --> tempo
+analyst --> grafana : вхід за паролем
+@enduml

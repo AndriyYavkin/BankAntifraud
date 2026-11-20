@@ -1,0 +1,15 @@
+@startuml
+title C4, рівень 1: Контекст системи
+skinparam defaultTextAlignment center
+skinparam shadowing false
+
+actor "Операціоніст банку\n(operator)" as operator
+actor "Аналітик з протидії\nшахрайству (analyst)" as analyst
+actor "Адміністратор\n(admin)" as admin
+
+rectangle "Система банківських переказів\nі антифрод-аналізу" as system #LightBlue
+
+operator --> system : виконує перекази,\nвідкриває рахунки
+analyst --> system : переглядає алерти,\nдашборди, логи, трейси
+admin --> system : керує користувачами,\nрозблоковує рахунки
+@enduml

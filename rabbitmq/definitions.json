@@ -1,0 +1,31 @@
+{
+  "users": [
+    { "name": "bank", "password": "bank_rabbit_pass", "tags": ["administrator"] },
+    { "name": "transfer_service", "password": "transfer_pass", "tags": [] },
+    { "name": "fraud_worker", "password": "fraud_pass", "tags": [] }
+  ],
+  "vhosts": [{ "name": "bank" }],
+  "permissions": [
+    { "user": "bank", "vhost": "bank", "configure": ".*", "write": ".*", "read": ".*" },
+    { "user": "transfer_service", "vhost": "bank", "configure": "^$", "write": "^bank$", "read": "^$" },
+    { "user": "fraud_worker", "vhost": "bank", "configure": "^$", "write": "^$", "read": "^transfers\\.fraud-check$" }
+  ],
+  "exchanges": [
+    { "name": "bank", "vhost": "bank", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {} },
+    { "name": "bank.dead", "vhost": "bank", "type": "direct", "durable": true, "auto_delete": false, "internal": false, "arguments": {} }
+  ],
+  "queues": [
+    {
+      "name": "transfers.fraud-check", "vhost": "bank", "durable": true, "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "bank.dead",
+        "x-dead-letter-routing-key": "transfers.invalid"
+      }
+    },
+    { "name": "transfers.invalid", "vhost": "bank", "durable": true, "auto_delete": false, "arguments": {} }
+  ],
+  "bindings": [
+    { "source": "bank", "vhost": "bank", "destination": "transfers.fraud-check", "destination_type": "queue", "routing_key": "transfer.initiated", "arguments": {} },
+    { "source": "bank.dead", "vhost": "bank", "destination": "transfers.invalid", "destination_type": "queue", "routing_key": "transfers.invalid", "arguments": {} }
+  ]
+}

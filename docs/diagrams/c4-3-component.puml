@@ -1,0 +1,39 @@
+@startuml
+title C4, рівень 3: Компоненти transfer-service і fraud-worker
+skinparam defaultTextAlignment center
+skinparam shadowing false
+left to right direction
+
+rectangle "transfer-service" {
+  rectangle "HTTP API\n(Program.cs)\nмаршрути /api, JWT, ролі" as api
+  rectangle "TransferExecutor\nтранзакція, блокування,\nперевірка балансу, повтори" as exec
+  rectangle "AccountRepository\nрахунки, історія, алерти" as repo
+  rectangle "EventPublisher\nпублікація з підтвердженням,\nконтекст трейса" as pub
+  rectangle "BalanceMonitor\nзагальна сума грошей,\nзаблоковані рахунки" as mon
+  rectangle "AppMetrics\nPrometheus" as m1
+}
+
+rectangle "fraud-worker" {
+  rectangle "FraudConsumer\nчитання черги, ack/nack" as cons
+  rectangle "FraudAnalyzer\nправила: velocity, fan_out,\nping_pong, high_amount,\nbalance_drain, round_amount" as an
+  rectangle "PendingSweeper\nперевірка переказів\nбез події" as sw
+  rectangle "WorkerMetrics\nPrometheus" as m2
+}
+
+database "PostgreSQL" as db
+queue "RabbitMQ" as mq
+
+api --> exec
+api --> repo
+exec --> db
+exec --> pub
+exec --> m1
+repo --> db
+mon --> db
+pub --> mq
+mq --> cons
+cons --> an
+sw --> an
+an --> db
+cons --> m2
+@enduml

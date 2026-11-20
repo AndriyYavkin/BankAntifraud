@@ -1,0 +1,47 @@
+@startuml
+title Модель даних PostgreSQL
+skinparam shadowing false
+hide circle
+
+entity accounts {
+  * id : SERIAL <<PK>>
+  --
+  owner_name : TEXT
+  iban : TEXT <<UNIQUE>>
+  balance : NUMERIC(14,2) CHECK >= 0
+  currency : CHAR(3)
+  is_blocked : BOOLEAN
+  is_internal : BOOLEAN
+  created_at, updated_at : TIMESTAMPTZ
+}
+
+entity transfers {
+  * id : UUID <<PK>>
+  --
+  from_account_id : INT <<FK>>
+  to_account_id : INT <<FK>>
+  amount : NUMERIC(14,2) CHECK > 0
+  currency : CHAR(3)
+  from_balance_after : NUMERIC(14,2)
+  isolation_level, lock_mode : TEXT
+  attempts : INT
+  fraud_status : pending | clean | suspicious
+  fraud_score : INT
+  created_at, checked_at : TIMESTAMPTZ
+}
+
+entity fraud_alerts {
+  * id : BIGSERIAL <<PK>>
+  --
+  transfer_id : UUID <<FK>>
+  account_id : INT <<FK>>
+  rule : TEXT
+  score : INT
+  details : TEXT
+  created_at : TIMESTAMPTZ
+}
+
+accounts ||--o{ transfers : from / to
+transfers ||--o{ fraud_alerts
+accounts ||--o{ fraud_alerts
+@enduml

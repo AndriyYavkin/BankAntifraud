@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 640" font-family="Arial, sans-serif" font-size="13">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#222"/></marker></defs>
+<rect width="1320" height="640" fill="#fff"/>
+<text x="660.0" y="28" text-anchor="middle" font-size="17" font-weight="bold">IDEF0, A-1: декомпозиція функції A0</text>
+<rect x="60" y="90" width="170" height="75" fill="#dbeafe" stroke="#222" stroke-width="2"/>
+<text x="145.0" y="123.5" text-anchor="middle" font-weight="bold">Автентифікувати</text>
+<text x="145.0" y="141.5" text-anchor="middle" font-weight="bold">і прийняти запит</text>
+<text x="224" y="159" text-anchor="end" font-size="11">A1</text>
+<rect x="280" y="190" width="170" height="75" fill="#dbeafe" stroke="#222" stroke-width="2"/>
+<text x="365.0" y="223.5" text-anchor="middle" font-weight="bold">Виконати ACID-</text>
+<text x="365.0" y="241.5" text-anchor="middle" font-weight="bold">транзакцію</text>
+<text x="444" y="259" text-anchor="end" font-size="11">A2</text>
+<rect x="500" y="290" width="170" height="75" fill="#dbeafe" stroke="#222" stroke-width="2"/>
+<text x="585.0" y="323.5" text-anchor="middle" font-weight="bold">Опублікувати</text>
+<text x="585.0" y="341.5" text-anchor="middle" font-weight="bold">подію</text>
+<text x="664" y="359" text-anchor="end" font-size="11">A3</text>
+<rect x="720" y="390" width="170" height="75" fill="#dbeafe" stroke="#222" stroke-width="2"/>
+<text x="805.0" y="423.5" text-anchor="middle" font-weight="bold">Проаналізувати</text>
+<text x="805.0" y="441.5" text-anchor="middle" font-weight="bold">на шахрайство</text>
+<text x="884" y="459" text-anchor="end" font-size="11">A4</text>
+<rect x="940" y="490" width="170" height="75" fill="#dbeafe" stroke="#222" stroke-width="2"/>
+<text x="1025.0" y="523.5" text-anchor="middle" font-weight="bold">Зібрати і показати</text>
+<text x="1025.0" y="541.5" text-anchor="middle" font-weight="bold">спостережуваність</text>
+<text x="1104" y="559" text-anchor="end" font-size="11">A5</text>
+<path d="M10 115 L60 115" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M10 145 L60 145" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M230 128 L255 128 L255 215 L280 215" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M450 228 L475 228 L475 315 L500 315" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M670 328 L695 328 L695 415 L720 415" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M890 428 L915 428 L915 515 L940 515" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M450 205 L1300 205" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M890 405 L1300 405" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M1110 527 L1300 527" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M145 60 L145 90" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M365 60 L365 190" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M805 60 L805 390" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M365 265 L365 280 L1025 280 L1025 490" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M805 465 L805 480 L985 480 L985 490" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M585 365 L585 470 L965 470 L965 490" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="12" y="108" text-anchor="start" font-size="12">Запит</text>
+<text x="12" y="138" text-anchor="start" font-size="12">JWT</text>
+<text x="258" y="120" text-anchor="start" font-size="12">перевірений запит</text>
+<text x="478" y="220" text-anchor="start" font-size="12">commit</text>
+<text x="698" y="320" text-anchor="start" font-size="12">TransferInitiated</text>
+<text x="918" y="420" text-anchor="start" font-size="12">рішення</text>
+<text x="1295" y="198" text-anchor="end" font-size="12">переказ / 4xx</text>
+<text x="1295" y="398" text-anchor="end" font-size="12">алерти, блокування</text>
+<text x="1295" y="520" text-anchor="end" font-size="12">дашборд, алерти</text>
+<text x="145" y="52" text-anchor="middle" font-size="12">ролі</text>
+<text x="365" y="52" text-anchor="middle" font-size="12">ізоляція, порядок блокувань</text>
+<text x="805" y="52" text-anchor="middle" font-size="12">правила антифроду</text>
+<text x="860" y="274" text-anchor="middle" font-size="12">метрики транзакцій</text>
+</svg>

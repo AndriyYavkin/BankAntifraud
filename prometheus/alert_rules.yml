@@ -1,0 +1,170 @@
+groups:
+  - name: bank_transactions
+    rules:
+      - alert: DeadlocksDetected
+        expr: sum(increase(bank_transfer_conflicts_total{type="deadlock"}[1m])) > 0
+        for: 0s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Deadlocks in transfer transactions"
+          description: "{{ $value | humanize }} deadlocks in the last minute. Check lock order of concurrent transfers."
+
+      - alert: SerializationFailuresHigh
+        expr: sum(increase(bank_transfer_conflicts_total{type="serialization"}[1m])) > 5
+        for: 0s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Many serialization failures"
+          description: "{{ $value | humanize }} transactions were aborted with SQLSTATE 40001 in the last minute."
+
+      - alert: SlowTransferTransactions
+        expr: histogram_quantile(0.95, sum by (le) (rate(bank_transfer_tx_duration_seconds_bucket[1m]))) > 0.5
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow transfer transactions"
+          description: "p95 transaction duration is {{ $value | humanizeDuration }}."
+
+      - alert: BalanceValidationErrorsSpike
+        expr: sum(increase(bank_transfer_validation_errors_total{reason=~"insufficient_funds|account_blocked"}[1m])) > 10
+        for: 0s
+        labels:
+          severity: info
+        annotations:
+          summary: "Many rejected transfers"
+          description: "{{ $value | humanize }} transfers rejected because of balance or blocked accounts in the last minute."
+
+      - alert: TotalBalanceChanged
+        expr: abs(delta(bank_total_balance{currency="UAH"}[1m])) > 0.009 unless on() (sum(increase(bank_accounts_created_total[1m])) > 0)
+        for: 0s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Total amount of money changed"
+          description: "Sum of balances changed by {{ $value | humanize }} UAH while only transfers were executed. Possible lost update."
+
+  - name: bank_fraud
+    rules:
+      - alert: FraudAlertsSpike
+        expr: sum(increase(bank_fraud_checks_total{result="suspicious"}[2m])) > 3
+        for: 0s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Suspicious transfers detected"
+          description: "{{ $value | humanize }} suspicious transfers in the last 2 minutes."
+
+      - alert: AccountBlockedByAntiFraud
+        expr: increase(bank_fraud_accounts_blocked_total[2m]) > 0
+        for: 0s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Account blocked by anti-fraud"
+          description: "The anti-fraud worker blocked {{ $value | humanize }} accounts in the last 2 minutes."
+
+      - alert: FraudQueueBacklog
+        expr: sum(rabbitmq_queue_messages{queue="transfers.fraud-check"}) > 20
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Fraud-check queue is growing"
+          description: "{{ $value }} TransferInitiated events are waiting for analysis."
+
+      - alert: InvalidEventsInDeadLetterQueue
+        expr: sum(rabbitmq_queue_messages{queue="transfers.invalid"}) > 0
+        for: 5s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Invalid events in dead-letter queue"
+          description: "{{ $value }} messages in transfers.invalid need investigation."
+
+      - alert: FraudCheckLagHigh
+        expr: histogram_quantile(0.95, sum by (le) (rate(bank_fraud_event_lag_seconds_bucket[2m]))) > 10
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Fraud analysis is delayed"
+          description: "p95 delay between transfer and analysis is {{ $value | humanizeDuration }}."
+
+  - name: bank_security
+    rules:
+      - alert: UnauthorizedRequestsSpike
+        expr: sum(increase(bank_api_access_denied_total[1m])) > 10
+        for: 0s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Many unauthorized API requests"
+          description: "{{ $value | humanize }} requests rejected by authentication or authorization in the last minute."
+
+      - alert: LoginFailuresSpike
+        expr: sum(increase(bank_auth_login_attempts_total{result="invalid_credentials"}[1m])) > 5
+        for: 0s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Possible password brute force"
+          description: "{{ $value | humanize }} failed logins in the last minute."
+
+  - name: bank_infrastructure
+    rules:
+      - alert: TransferServiceDown
+        expr: up{job="transfer-service"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "transfer-service is down"
+          description: "Transfers cannot be accepted."
+
+      - alert: FraudWorkerDown
+        expr: up{job="fraud-worker"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "fraud-worker is down"
+          description: "Transfers are executed but not analyzed; events wait in the queue."
+
+      - alert: AuthServiceDown
+        expr: up{job="auth-service"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "auth-service is down"
+          description: "Users cannot get access tokens."
+
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "Accounts and transfers are unavailable."
+
+      - alert: RabbitMQDown
+        expr: up{job="rabbitmq"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "RabbitMQ is down"
+          description: "TransferInitiated events cannot be delivered."
+
+      - alert: PostgresDeadlocks
+        expr: sum(increase(pg_stat_database_deadlocks{datname="bank"}[1m])) > 0
+        for: 0s
+        labels:
+          severity: warning
+        annotations:
+          summary: "PostgreSQL reported deadlocks"
+          description: "pg_stat_database shows {{ $value | humanize }} new deadlocks in the last minute."
