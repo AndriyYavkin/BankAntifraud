@@ -94,6 +94,18 @@ Invoke-RestMethod -Method Post -Uri http://localhost:8000/api/transfers -Headers
 Invoke-RestMethod -Uri http://localhost:8000/api/stats -Headers $h
 ```
 
+Те саме для macOS / Linux (bash або zsh):
+
+```
+T=$(curl -s -X POST http://localhost:8002/login -H 'Content-Type: application/json' -d '{"username":"operator","password":"operator_pass"}' | python3 -c 'import sys,json; print(json.load(sys.stdin)["access_token"])')
+
+curl -s "http://localhost:8000/api/accounts?limit=10" -H "Authorization: Bearer $T"
+
+curl -s -X POST http://localhost:8000/api/transfers -H "Authorization: Bearer $T" -H 'Content-Type: application/json' -d '{"from_account_id":7,"to_account_id":8,"amount":150.25,"reference":"rent"}'
+
+curl -s http://localhost:8000/api/stats -H "Authorization: Bearer $T"
+```
+
 Перегляд даних у базі:
 
 ```
