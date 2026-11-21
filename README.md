@@ -4,6 +4,16 @@
 
 Стек: C# (.NET 8, ASP.NET Core), PostgreSQL 16, SQLite, RabbitMQ 4, Prometheus, Alertmanager, Grafana Loki + Alloy, Grafana Tempo (OpenTelemetry), Grafana, Docker Compose.
 
+## Команда
+
+Студенти 4 курсу, група ІПС-42.
+
+| Учасник | Роль | Зона відповідальності |
+|---|---|---|
+| Явкін Андрій | бекенд і база даних | схема PostgreSQL, transfer-service (транзакції, блокування, рівні ізоляції), RabbitMQ, fraud-worker |
+| Криворучко Кирило | моніторинг | Prometheus і алерти, Alertmanager, дашборд Grafana, Loki + Alloy, Tempo + OpenTelemetry |
+| Марченко Данил | інфраструктура, безпека, тестування | Docker Compose і Dockerfile, auth-service (SQLite, JWT, ролі), load-generator, тестування |
+
 ## Запуск
 
 Потрібен лише запущений Docker Desktop (Windows 11, WSL2). Команди виконуй у PowerShell у теці проєкту.
