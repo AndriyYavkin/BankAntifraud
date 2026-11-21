@@ -163,3 +163,5 @@ docker compose down
 | порожній дашборд | зачекай 15–30 с після першого навантаження, перевір http://localhost:9090/targets |
 | логів немає в Loki | `docker compose logs alloy`; у Docker Desktop має бути доступний `/var/run/docker.sock` (типово так) |
 | треба почати з нуля | `docker compose down -v`, потім `docker compose up -d --build` |
+
+.
